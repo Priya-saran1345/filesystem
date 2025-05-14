@@ -1,6 +1,7 @@
 import { createServer } from 'node:http';
 import * as fs from 'fs'
 import fspromise from 'node:fs/promises'
+import { connect } from 'node:net';
 
 
 const server = createServer(async (req, res) => {
@@ -41,6 +42,17 @@ const server = createServer(async (req, res) => {
         const readStream =fs.createReadStream('./dbData.json')
         readStream.pipe(res)
         }
+    }
+    else if(req.url=='/')
+    {
+        res.write(200,{
+            'content-type':'text/event-stream',
+            'cache-control':'no-cache',
+            connection:'keep-alive',
+        })
+        setInterval(()=>{
+res.write(`data: the data is ${count++} \n\n`)
+        },1000)
     }
     else {
 
