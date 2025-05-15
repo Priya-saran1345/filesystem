@@ -8,10 +8,28 @@ const server = createServer(async (req, res) => {
     // console.log("request",req)
     // console.log('Request received');
     // routing ----------------------
+    // res.writeHead(200, {
+    //     'content-type': 'text/Html'
+    // })  
+   let count=1
+     if (req.url === '/') {
+        let Htmldata =fs.createReadStream('./Stream.html')
+        Htmldata.pipe(res)
+  }
+  else if(req.url=='/stream/')
+  {
+
     res.writeHead(200, {
-        'content-type': 'text/Html'
-    })
-    if (req.url == '/blog/') {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+    });
+
+    setInterval(() => {
+      res.write(`data: the data is ${count++}\n\n`);
+    }, 1000);
+  }
+   else if (req.url == '/blog/') {
         // const data= await fs.readFile('./index.html')
         // res.end(data)
         const dataStream = fs.createReadStream('./index.html')
@@ -43,19 +61,7 @@ const server = createServer(async (req, res) => {
         readStream.pipe(res)
         }
     }
-    else if(req.url=='/')
-    {
-        res.write(200,{
-            'content-type':'text/event-stream',
-            'cache-control':'no-cache',
-            connection:'keep-alive',
-        })
-        setInterval(()=>{
-res.write(`data: the data is ${count++} \n\n`)
-        },1000)
-    }
     else {
-
         res.end('<h1>Hello from server</h1>`');
     }
 });
